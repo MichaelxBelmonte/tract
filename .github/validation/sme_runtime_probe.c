@@ -2,9 +2,15 @@
 #include <stdio.h>
 #include <sys/auxv.h>
 
+#ifndef HWCAP2_SME
 #define HWCAP2_SME (1ULL << 23)
+#endif
+#ifndef HWCAP2_SME2
 #define HWCAP2_SME2 (1ULL << 37)
+#endif
+#ifndef HWCAP2_SME_F16F16
 #define HWCAP2_SME_F16F16 (1ULL << 42)
+#endif
 
 int main(void) {
     const unsigned long long hwcap2 = getauxval(AT_HWCAP2);

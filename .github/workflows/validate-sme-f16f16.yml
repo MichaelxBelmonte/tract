@@ -17,7 +17,7 @@ jobs:
       - name: Install cross compiler and QEMU
         run: |
           apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gcc-aarch64-linux-gnu git libc6-dev-arm64-cross qemu-user
+          DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gcc gcc-aarch64-linux-gnu git libc6-dev-arm64-cross qemu-user
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -47,6 +47,7 @@ jobs:
         run: cargo test -p tract-linalg --target aarch64-unknown-linux-gnu arm64::sme -- --nocapture
 
   windows-arm64:
+    if: ${{ !contains(github.event.head_commit.message, '[qemu-only]') }}
     runs-on: windows-11-vs2026-arm
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
