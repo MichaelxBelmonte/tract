@@ -4,8 +4,23 @@ fn var(k: &str) -> String {
     env::var(k).unwrap()
 }
 
+fn target_is_windows_arm64_msvc() -> bool {
+    env::var("CARGO_CFG_TARGET_ARCH") == Ok("aarch64".to_string())
+        && env::var("CARGO_CFG_TARGET_ENV") == Ok("msvc".to_string())
+}
+
 fn use_masm() -> bool {
-    env::var("CARGO_CFG_TARGET_ENV") == Ok("msvc".to_string()) && var("HOST").contains("-windows-")
+    env::var("CARGO_CFG_TARGET_ENV") == Ok("msvc".to_string())
+        && var("HOST").contains("-windows-")
+        && !target_is_windows_arm64_msvc()
+}
+
+fn arm64_cc() -> cc::Build {
+    let mut build = cc::Build::new();
+    if target_is_windows_arm64_msvc() {
+        build.compiler("clang");
+    }
+    build
 }
 
 fn include_amx() -> bool {
@@ -86,7 +101,7 @@ impl ConfigForHalf {
     }
 
     fn cc(&self) -> cc::Build {
-        let mut cc = cc::Build::new();
+        let mut cc = arm64_cc();
         for flag in &self.extra_flags {
             cc.flag(flag);
         }
@@ -194,7 +209,7 @@ fn main() {
                 &suffix,
                 false,
             );
-            cc::Build::new().files(files).compile("arm64simd");
+            arm64_cc().files(files).compile("arm64simd");
             if include_amx() {
                 let files = preprocess_files("arm64/apple_amx", &[], &suffix, false);
                 cc::Build::new().files(files).compile("appleamx");
