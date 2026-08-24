@@ -17,7 +17,7 @@ jobs:
       - name: Install cross compiler and QEMU
         run: |
           apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates gcc-aarch64-linux-gnu git libc6-dev-arm64-cross qemu-user
+          DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl gcc-aarch64-linux-gnu git libc6-dev-arm64-cross qemu-user
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
